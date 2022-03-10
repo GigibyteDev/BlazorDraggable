@@ -1,0 +1,6 @@
+﻿.main-containers-wrapper {
+    display: flex;
+    justify-content: space-evenly;
+    height: 80vh;
+    color: #B3B3B3;
+}

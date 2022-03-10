@@ -1,0 +1,13 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="container-wrapper"
+        ondragover="event.preventDefault();"
+        ondragstart="event.dataTransfer.setData('', event.target.id);"
+        @ondrop=HandleDrop
+        @ondragenter=HandleDragEnter
+        @ondragleave=HandleDragLeave>
+    @foreach(var model in ContainerData.DraggableModels)
+    {
+        <Draggable DraggableModel="@model"/>
+    }
+</div>

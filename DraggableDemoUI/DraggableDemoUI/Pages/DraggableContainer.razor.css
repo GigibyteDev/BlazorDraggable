@@ -1,0 +1,10 @@
+﻿.container-wrapper {
+    margin: 20px;
+    width: 25vw;
+    height: 100%;
+    border: 2px solid #B3B3B3;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    align-content: flex-start;
+}

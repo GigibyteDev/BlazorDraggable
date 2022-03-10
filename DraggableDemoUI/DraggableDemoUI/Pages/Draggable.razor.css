@@ -1,0 +1,11 @@
+﻿.item-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    /*background-color: #BB86FC;*/
+    background-color: #3700B3;
+    /*background-color: #03DAC6;*/
+    margin: 20px;
+}
