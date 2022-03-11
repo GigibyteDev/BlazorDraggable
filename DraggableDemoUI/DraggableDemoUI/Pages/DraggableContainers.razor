@@ -1,7 +1,5 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<h2>Currently Dragging: ID #@CurrentlyDraggingId</h2>
-<button @onclick=HandleGetDraggables>Get Draggables</button>
 <div class="main-containers-wrapper">
     @foreach(var container in DragState.Value.Draggables)
     {

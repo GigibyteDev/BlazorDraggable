@@ -29,13 +29,15 @@ namespace DraggableDemoUI.Store.ConnectionUseCase
                     action.UpdateState();
                 });
 
-                connection.On<DraggableContainerModel, DraggableContainerModel>("DraggableMoved", (previousContainer, newContainer) =>
+                connection.On<DraggableModel, int, int?>("DraggableMoved", (draggableModel, containerId, position) =>
                 {
-                    dispatcher.Dispatch(new DraggableMovedAction(previousContainer, newContainer));
+                    dispatcher.Dispatch(new DraggableMovedLocalAction(draggableModel, containerId, position));
                     action.UpdateState();
                 });
 
                 await connection.StartAsync();
+
+                await connection.SendAsync("InstantiateConnection");
 
                 dispatcher.Dispatch(new ConnectionSuccessAction(connection));
             }

@@ -10,33 +10,35 @@ namespace DraggableDemoUI.Store.DragUseCase
         {
             try
             {
-                var previousContainer = state.Draggables.Single(container => container.DraggableModels.Contains(action.DraggableModel));
+                var previousContainer = state.Draggables.Single(container => container.DraggableModels.Select(drag => drag.Id).Contains(action.DraggableModel.Id));
                 var newContainer = state.Draggables.Single(container => container.ContainerId == action.ContainerId);
 
-                action.DraggableModel.LastUpdated = DateTime.Now;
+                previousContainer.DraggableModels.RemoveAll(d => d.Id == action.DraggableModel.Id);
+                previousContainer.ModelsOrder.Remove(action.DraggableModel.Id);
 
-                previousContainer.DraggableModels.Remove(action.DraggableModel);
-                newContainer.DraggableModels.Add(action.DraggableModel);
+                if (action.Position is not null)
+                {
+                    newContainer.DraggableModels.Insert(action.Position.Value, action.DraggableModel);
+                    newContainer.ModelsOrder.Insert(action.Position.Value, action.DraggableModel.Id);
+                }
+                else
+                {
+                    newContainer.DraggableModels.Add(action.DraggableModel);
+                    newContainer.ModelsOrder.Add(action.DraggableModel.Id);
+                }
+
+                action.DraggableModel.LastUpdated = DateTime.Now;
             }
             catch (Exception ex)
             {}
 
-            return new DragState(state, currentlyDragging: null);
+            return new DragState(state, currentlyDragging: new DraggableModel(-1));
         }
 
         [ReducerMethod]
         public static DragState DraggableMovedAction(DragState state, DraggableMovedAction action)
         {
-            var previousContainer = state.Draggables.Single(container => container.ContainerId == action.PreviousContainer.ContainerId);
-            var newContainer = state.Draggables.Single(container => container.ContainerId == action.NewContainer.ContainerId);
-
-            int previousContainerIndex = state.Draggables.IndexOf(previousContainer);
-            int newContainerIndex = state.Draggables.IndexOf(newContainer);
-
-            state.Draggables[previousContainerIndex] = action.PreviousContainer;
-            state.Draggables[newContainerIndex] = action.NewContainer;
-
-            return new DragState(state);
+            return new DragState(state, newDraggables: action.DraggableModels.ToList());
         }
 
         [ReducerMethod]

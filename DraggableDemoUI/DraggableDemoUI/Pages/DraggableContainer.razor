@@ -3,11 +3,16 @@
 <div class="container-wrapper"
         ondragover="event.preventDefault();"
         ondragstart="event.dataTransfer.setData('', event.target.id);"
-        @ondrop=HandleDrop
-        @ondragenter=HandleDragEnter
-        @ondragleave=HandleDragLeave>
+        @ondrop=HandleContainerDrop
+        @ondragenter=HandleContainerDragEnter
+        @ondragleave=HandleContainerDragLeave>
     @foreach(var model in ContainerData.DraggableModels)
     {
-        <Draggable DraggableModel="@model"/>
+        <div 
+            ondragover="event.preventDefault();"
+            ondragstart="event.dataTransfer.setData('', event.target.id);"
+            @ondrop="() => HandleDraggableDrop(model.Id)">
+            <Draggable DraggableModel="@model" />
+        </div>
     }
 </div>

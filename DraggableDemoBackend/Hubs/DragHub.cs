@@ -5,48 +5,22 @@ namespace DraggableDemoBackend.Hubs
 {
     public class DragHub : Hub
     {
-        private readonly IEnumerable<DraggableContainerModel> draggableModels;
+        private readonly List<DraggableContainerModel> draggableModels;
         public DragHub()
         {
-            draggableModels = new List<DraggableContainerModel>()
+            draggableModels = new List<DraggableContainerModel>();
+
+            for(int i = 0; i < 3; i++)
             {
-                new DraggableContainerModel(0, "Container1", new List<DraggableModel>()
-                {
-                    new DraggableModel(0),
-                    new DraggableModel(1),
-                    new DraggableModel(5),
-                    new DraggableModel(6),
-                    new DraggableModel(10),
-                    new DraggableModel(11),
-                }),
-                new DraggableContainerModel(1, "Container2", new List<DraggableModel>()
-                {
-                    new DraggableModel(2),
-                    new DraggableModel(7),
-                    new DraggableModel(12),
-                }),
-                new DraggableContainerModel(2, "Container3", new List<DraggableModel>()
-                {
-                    new DraggableModel(3),
-                    new DraggableModel(4),
-                    new DraggableModel(8),
-                    new DraggableModel(9),
-                    new DraggableModel(13),
-                    new DraggableModel(14),
-                }),
-                new DraggableContainerModel(3, "Container4", new List<DraggableModel>()
-                {
-                    new DraggableModel(15),
-                    new DraggableModel(16),
-                    new DraggableModel(17),
-                }),
-                new DraggableContainerModel(4, "Container5", new List<DraggableModel>()
-                {
-                    new DraggableModel(18),
-                    new DraggableModel(19),
-                    new DraggableModel(20),
-                }),
-            };
+                draggableModels.Add(new DraggableContainerModel(i, $"container{i}", new List<DraggableModel>()));
+            }
+
+            for (int i = 0; i < 35; i++) 
+            {
+                var container = draggableModels.First(d => d.ContainerId == i % draggableModels.Count());
+                container.DraggableModels.Add(new DraggableModel(i));
+                container.ModelsOrder.Add(i);
+            }
         }
 
         public async Task InstantiateConnection()
@@ -54,24 +28,33 @@ namespace DraggableDemoBackend.Hubs
             await Clients.Client(Context.ConnectionId).SendAsync("ConnectionSuccessful", draggableModels);
         }
 
-        public async Task MoveDraggable(DraggableModel draggableModel, int containerId)
+        public async Task MoveDraggable(DraggableModel draggableModel, int containerId, int? position = null)
         {
+            await Clients.AllExcept(new List<string>(){ Context.ConnectionId }).SendAsync("DraggableMoved", draggableModel, containerId, position);
+            
             try
             {
                 var previousContainer = draggableModels.First(container => container.DraggableModels.Select(draggable => draggable.Id).Contains(draggableModel.Id));
                 var newContainer = draggableModels.First(container => container.ContainerId == containerId);
 
-                draggableModel.LastUpdated = DateTime.Now;
-
                 previousContainer.DraggableModels.RemoveAll(d => d.Id == draggableModel.Id);
+                previousContainer.ModelsOrder.Remove(draggableModel.Id);
+
                 newContainer.DraggableModels.Add(draggableModel);
 
-                await Clients.All.SendAsync("DraggableMoved", previousContainer, newContainer);
+                if (position is not null)
+                {
+                    newContainer.ModelsOrder.Insert(position.Value, draggableModel.Id);
+                }
+                else
+                {
+                    newContainer.ModelsOrder.Add(draggableModel.Id);
+                }
+
+                draggableModel.LastUpdated = DateTime.Now;
             }
             catch (Exception ex)
-            {
-
-            }
+            {}
         }
     }
 }

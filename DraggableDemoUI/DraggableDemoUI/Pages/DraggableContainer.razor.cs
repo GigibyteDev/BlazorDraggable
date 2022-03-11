@@ -20,24 +20,37 @@ namespace DraggableDemoUI.Pages
         [Inject]
         public IDispatcher Dispatcher { get; set; }
 
-        public void HandleDrop()
+        public void HandleContainerDrop()
         {
-            // Dispatcher.Dispatch(new DraggableMovedLocalAction(DragState.Value.CurrentlyDragging, ContainerData.ContainerId));
-            if (ConnectionState.Value.Connection is not null && DragState.Value.CurrentlyDragging is not null)
+            if (ConnectionState.Value.Connection is not null 
+                && DragState.Value.CurrentlyDragging is not null
+                && DragState.Value.CurrentlyDragging.Id != -1)
             {
-                ConnectionState.Value.Connection.SendCoreAsync("MoveDraggable", new object[] { DragState.Value.CurrentlyDragging, ContainerData.ContainerId });
+                ConnectionState.Value.Connection.SendCoreAsync("MoveDraggable", new object[] { DragState.Value.CurrentlyDragging, ContainerData.ContainerId, null });
+                Dispatcher.Dispatch(new DraggableMovedLocalAction(DragState.Value.CurrentlyDragging, ContainerData.ContainerId));
             }
-
         }
 
-        public void HandleDragEnter()
+        public void HandleContainerDragEnter()
         {
 
         }
 
-        public void HandleDragLeave()
+        public void HandleContainerDragLeave()
         {
 
+        }
+
+        public void HandleDraggableDrop(int draggableId)
+        {
+            if (ConnectionState.Value.Connection is not null 
+                && DragState.Value.CurrentlyDragging is not null
+                && DragState.Value.CurrentlyDragging.Id != -1)
+            {
+                int draggablePosition = ContainerData.ModelsOrder.IndexOf(draggableId);
+                ConnectionState.Value.Connection.SendCoreAsync("MoveDraggable", new object[] { DragState.Value.CurrentlyDragging, ContainerData.ContainerId, draggablePosition });
+                Dispatcher.Dispatch(new DraggableMovedLocalAction(DragState.Value.CurrentlyDragging, ContainerData.ContainerId, draggablePosition));
+            }
         }
     }
 }

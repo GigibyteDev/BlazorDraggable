@@ -19,8 +19,24 @@ namespace DraggableDemoUI.Store.DragUseCase
 
         public DragState(DragState previousState, List<DraggableContainerModel>? newDraggables = null, DraggableModel? currentlyDragging = null)
         {
-            Draggables = newDraggables ?? previousState.Draggables;
-            CurrentlyDragging = currentlyDragging ?? previousState.CurrentlyDragging;
+            Draggables = newDraggables is not null ? OrderDraggableContainerModels(newDraggables) : previousState.Draggables;
+            CurrentlyDragging = newDraggables is null ? currentlyDragging ?? previousState.CurrentlyDragging : null;
+        }
+
+        private List<DraggableContainerModel> OrderDraggableContainerModels(List<DraggableContainerModel> containers)
+        {
+            List<DraggableContainerModel> sortedDraggableModels = new List<DraggableContainerModel>();
+            foreach (var container in containers)
+            {
+                DraggableContainerModel sortedContainerToAdd = new DraggableContainerModel(container.ContainerId, container.ContainerName, new List<DraggableModel>(), container.ModelsOrder);
+                foreach(int id in container.ModelsOrder)
+                {
+                    sortedContainerToAdd.DraggableModels.Add(container.DraggableModels.First(d => d.Id == id));
+                }
+                sortedDraggableModels.Add(sortedContainerToAdd);
+            }
+
+            return sortedDraggableModels;
         }
     }
 
@@ -41,12 +57,14 @@ namespace DraggableDemoUI.Store.DragUseCase
         public int ContainerId { get; set; }
         public string ContainerName { get; set; }
         public List<DraggableModel> DraggableModels { get; set; }
+        public List<int> ModelsOrder { get; set; }
 
-        public DraggableContainerModel(int containerId, string containerName, List<DraggableModel> draggableModels)
+        public DraggableContainerModel(int containerId, string containerName, List<DraggableModel> draggableModels, List<int> modelsOrder)
         {
             ContainerId = containerId;
             ContainerName = containerName;
             DraggableModels = draggableModels;
+            ModelsOrder = modelsOrder;
         }
     }
 }

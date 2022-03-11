@@ -2,13 +2,11 @@
 {
     public class DraggableMovedAction
     {
-        public DraggableContainerModel PreviousContainer { get; set; }
-        public DraggableContainerModel NewContainer { get; set; }
+        public IEnumerable<DraggableContainerModel> DraggableModels { get; set; }
 
-        public DraggableMovedAction(DraggableContainerModel previousContainer, DraggableContainerModel newContainer)
+        public DraggableMovedAction(IEnumerable<DraggableContainerModel> draggableModels)
         {
-            PreviousContainer = previousContainer;
-            NewContainer = newContainer;
+            DraggableModels = draggableModels;
         }
     }
 }
