@@ -4,9 +4,9 @@
     {
         public int ContainerId { get; set; }
         public string ContainerName { get; set; }
-        public IEnumerable<DraggableModel> DraggableModels { get; set; }
+        public List<DraggableModel> DraggableModels { get; set; }
 
-        public DraggableContainerModel(int containerId, string containerName, IEnumerable<DraggableModel> draggableModels)
+        public DraggableContainerModel(int containerId, string containerName, List<DraggableModel> draggableModels)
         {
             ContainerId = containerId;
             ContainerName = containerName;

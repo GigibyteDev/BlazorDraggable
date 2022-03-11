@@ -1,4 +1,5 @@
-﻿using DraggableDemoUI.Store.DragUseCase;
+﻿using DraggableDemoUI.Store.ConnectionUseCase;
+using DraggableDemoUI.Store.DragUseCase;
 using DraggableDemoUI.Store.DragUseCase.DragActions;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
@@ -17,6 +18,7 @@ namespace DraggableDemoUI.Pages
         public void HandleDragStart()
         {
             Dispatcher.Dispatch(new BeginDraggingAction(DraggableModel));
+
             StateHasChanged();
         }
     }

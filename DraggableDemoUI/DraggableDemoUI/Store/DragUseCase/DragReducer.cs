@@ -6,7 +6,7 @@ namespace DraggableDemoUI.Store.DragUseCase
     public class DragReducer
     {
         [ReducerMethod]
-        public static DragState DraggableMovedAction(DragState state, DraggableMovedAction action)
+        public static DragState DraggableMovedLocalAction(DragState state, DraggableMovedLocalAction action)
         {
             try
             {
@@ -22,6 +22,21 @@ namespace DraggableDemoUI.Store.DragUseCase
             {}
 
             return new DragState(state, currentlyDragging: null);
+        }
+
+        [ReducerMethod]
+        public static DragState DraggableMovedAction(DragState state, DraggableMovedAction action)
+        {
+            var previousContainer = state.Draggables.Single(container => container.ContainerId == action.PreviousContainer.ContainerId);
+            var newContainer = state.Draggables.Single(container => container.ContainerId == action.NewContainer.ContainerId);
+
+            int previousContainerIndex = state.Draggables.IndexOf(previousContainer);
+            int newContainerIndex = state.Draggables.IndexOf(newContainer);
+
+            state.Draggables[previousContainerIndex] = action.PreviousContainer;
+            state.Draggables[newContainerIndex] = action.NewContainer;
+
+            return new DragState(state);
         }
 
         [ReducerMethod]

@@ -53,5 +53,25 @@ namespace DraggableDemoBackend.Hubs
         {
             await Clients.Client(Context.ConnectionId).SendAsync("ConnectionSuccessful", draggableModels);
         }
+
+        public async Task MoveDraggable(DraggableModel draggableModel, int containerId)
+        {
+            try
+            {
+                var previousContainer = draggableModels.First(container => container.DraggableModels.Select(draggable => draggable.Id).Contains(draggableModel.Id));
+                var newContainer = draggableModels.First(container => container.ContainerId == containerId);
+
+                draggableModel.LastUpdated = DateTime.Now;
+
+                previousContainer.DraggableModels.RemoveAll(d => d.Id == draggableModel.Id);
+                newContainer.DraggableModels.Add(draggableModel);
+
+                await Clients.All.SendAsync("DraggableMoved", previousContainer, newContainer);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

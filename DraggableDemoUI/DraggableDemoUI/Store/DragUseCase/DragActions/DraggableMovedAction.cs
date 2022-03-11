@@ -2,13 +2,13 @@
 {
     public class DraggableMovedAction
     {
-        public DraggableModel DraggableModel { get; set; }
-        public int ContainerId { get; set; }
+        public DraggableContainerModel PreviousContainer { get; set; }
+        public DraggableContainerModel NewContainer { get; set; }
 
-        public DraggableMovedAction(DraggableModel draggableModel, int containerId)
+        public DraggableMovedAction(DraggableContainerModel previousContainer, DraggableContainerModel newContainer)
         {
-            DraggableModel = draggableModel;
-            ContainerId = containerId;
+            PreviousContainer = previousContainer;
+            NewContainer = newContainer;
         }
     }
 }

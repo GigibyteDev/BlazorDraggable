@@ -29,6 +29,12 @@ namespace DraggableDemoUI.Store.ConnectionUseCase
                     action.UpdateState();
                 });
 
+                connection.On<DraggableContainerModel, DraggableContainerModel>("DraggableMoved", (previousContainer, newContainer) =>
+                {
+                    dispatcher.Dispatch(new DraggableMovedAction(previousContainer, newContainer));
+                    action.UpdateState();
+                });
+
                 await connection.StartAsync();
 
                 dispatcher.Dispatch(new ConnectionSuccessAction(connection));
